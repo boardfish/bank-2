@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  root 'root#index'
   get 'root/index'
   get 'root/callback'
   get 'root/logout'
