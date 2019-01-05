@@ -1,6 +1,14 @@
 class RootController < ApplicationController
   def index
     @monzo_login_url = monzo_login_url
+    if session[:access_token]
+      Monzo.configure(session[:access_token])
+      # May want to do things with this.
+      # TODO: Is there a nice way to see if an account is closed?
+      # @accounts = Monzo::Account.all
+      # @pots = Monzo::Pot.all
+      # @transactions = Monzo::Transaction.all(@accounts.last.id)
+    end
   end
 
   def callback
@@ -13,6 +21,8 @@ class RootController < ApplicationController
       code: params[:code]
     })
     session[:access_token] = JSON.parse(@response.body)['access_token']
+    flash[:notice] = 'Logged in successfully.'
+    redirect_to root_path
   end
 
   def logout
