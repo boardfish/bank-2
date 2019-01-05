@@ -4,6 +4,8 @@ class RootController < ApplicationController
   end
 
   def callback
+    @code = params[:code]
+    @state = params[:state]
   end
 
   def logout
