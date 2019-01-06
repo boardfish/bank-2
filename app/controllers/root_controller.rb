@@ -2,12 +2,12 @@ class RootController < ApplicationController
   def index
     @monzo_login_url = monzo_login_url
     if session[:access_token]
-      Monzo.configure(session[:access_token])
+      MonzoService.authenticate(session[:access_token])
       # May want to do things with this.
-      @account = Monzo::Account.all.last
-      @pots = Monzo::Pot.all.reject { |pot| pot.deleted }
-      @transactions = Monzo::Transaction.all(@account.id).reverse
-      @balance = Monzo::Balance.find(@account.id)
+      @account = MonzoService.default_account
+      @pots = MonzoService.pots
+      @transactions = MonzoService.transactions_by_month(months_back: params[:months_back].to_i || 0)
+      @balance = MonzoService.balance
       @grouped_transactions = total_spend_by_category(@transactions)
     end
   end
