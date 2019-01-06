@@ -14,7 +14,13 @@
     <h2>Transactions</h2>
     <ul>
       <% @transactions.each do |transaction| %>
-        <li><%= transaction.created %> | <%= transaction.description %> | <%= transaction.amount / 100.0 %> <%= transaction.currency %></li>
+        <li>
+          <%= transaction.metadata[:oauth2client_00009eUNchi7jOqB10g2yX_category] || transaction.category %> 
+          | <%= transaction.created %> 
+          | <%= transaction.description %> 
+          | <%= transaction.amount / 100.0 %> <%= transaction.currency %>
+          | <%= link_to 'Set category for some reason', set_category_path(transaction_id: transaction.id, category: 'Test Category!') %>
+        </li>
       <% end %>
     </ul>
 <% end %>
