@@ -9,6 +9,8 @@ class RootController < ApplicationController
       @transactions = MonzoService.transactions_by_month(months_back: params[:months_back].to_i || 0)
       @balance = MonzoService.balance
       @grouped_transactions = total_spend_by_category(@transactions)
+      @monthly_summary = (0..11).to_a.reverse.map { |months_back| total_spend_by_category(MonzoService.transactions_by_month(months_back: months_back)) }
+      @categories = MonzoService.transactions.map { |transaction| transaction.metadata[:oauth2client_00009eUNchi7jOqB10g2yX_category] || transaction.category}.uniq
     end
   end
 

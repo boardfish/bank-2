@@ -13,6 +13,8 @@ module RootHelper
       Money.new(object.amount, object.currency).format
     elsif object.is_a?(Monzo::Pot) or object.is_a?(Monzo::Balance)
       Money.new(object.balance, object.currency).format
+    elsif object.is_a?(Integer)
+      Money.new(object, 'GBP').format
     end
   end
 end

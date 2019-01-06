@@ -11,7 +11,26 @@
       <% end %>
     </ul>
     <h2>Transactions</h2>
-    <%= @grouped_transactions %>
+    <table>
+      <thead>
+        <tr>
+          <th>Months ago</th>
+          <% (0..11).to_a.reverse.each do |i|%>
+            <th><%= i %></th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% @categories.each do |category| %>
+          <tr>
+            <th><%= category.humanize %></th>
+            <% (0..11).to_a.each do |i|%>
+              <td><%= to_currency(@monthly_summary[i][category]) %></td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
     <br>
     <ul>
       <% @transactions.each do |transaction| %>
