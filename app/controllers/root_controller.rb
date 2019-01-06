@@ -8,6 +8,7 @@ class RootController < ApplicationController
       @pots = Monzo::Pot.all.reject { |pot| pot.deleted }
       @transactions = Monzo::Transaction.all(@account.id).reverse
       @balance = Monzo::Balance.find(@account.id)
+      @grouped_transactions = total_spend_by_category(@transactions)
     end
   end
 
@@ -43,6 +44,12 @@ class RootController < ApplicationController
     "&redirect_uri=#{CGI.escape 'http://localhost:3000/callback'}" \
     '&response_type=code' \
     '&state=foobar'
+  end
+
+  def total_spend_by_category(transactions)
+    transactions
+      .group_by { |transaction| transaction.metadata[:oauth2client_00009eUNchi7jOqB10g2yX_category] || transaction.category }
+      .map { |category, transactions| [category, transactions.sum { |transaction| transaction.amount }]}.to_h
   end
 
   def connection(raise_error: false, token: nil)
