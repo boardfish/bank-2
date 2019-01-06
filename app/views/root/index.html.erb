@@ -16,7 +16,7 @@
     <ul>
       <% @transactions.each do |transaction| %>
         <li>
-          <%= transaction.metadata[:oauth2client_00009eUNchi7jOqB10g2yX_category] || transaction.category %> 
+          <%= category(transaction) %> 
           | <%= transaction.created %> 
           | <%= transaction.description %> 
           | <%= transaction.amount / 100.0 %> <%= transaction.currency %>
