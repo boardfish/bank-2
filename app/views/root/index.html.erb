@@ -1,5 +1,5 @@
 <h1>Bank</h1>
-<p>Current balance: <%= @balance.inspect %></p>
+<p>Current balance: <%= to_currency(@balance) %></p>
 
 <% unless authenticated? %>
   <a href="<%= @monzo_login_url %>">Log in with Monzo</a>
@@ -7,7 +7,7 @@
     <h2>Pots</h2>
     <ul>
       <% @pots.each do |pot| %>
-        <li><%= pot.name %> | <%= pot.balance %> <%= pot.currency %></li>
+        <li><%= pot.name %> | <%= to_currency(pot) %></li>
       <% end %>
     </ul>
     <h2>Transactions</h2>
@@ -16,10 +16,10 @@
     <ul>
       <% @transactions.each do |transaction| %>
         <li>
-          <%= category(transaction) %> 
-          | <%= transaction.created %> 
+          <%= DateTime.parse(transaction.created).strftime("%y/%m/%d %H:%M") %> 
+          | <%= category(transaction) %> 
           | <%= transaction.description %> 
-          | <%= transaction.amount / 100.0 %> <%= transaction.currency %>
+          | <%= to_currency(transaction) %>
           | <%= link_to 'Set category for some reason', set_category_path(transaction_id: transaction.id, category: 'Test Category!') %>
         </li>
       <% end %>
