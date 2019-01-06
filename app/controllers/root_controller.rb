@@ -4,10 +4,10 @@ class RootController < ApplicationController
     if session[:access_token]
       Monzo.configure(session[:access_token])
       # May want to do things with this.
-      # TODO: Is there a nice way to see if an account is closed?
-      # @accounts = Monzo::Account.all
-      # @pots = Monzo::Pot.all
-      # @transactions = Monzo::Transaction.all(@accounts.last.id)
+      @account = Monzo::Account.all.last
+      @pots = Monzo::Pot.all.reject { |pot| pot.deleted }
+      @transactions = Monzo::Transaction.all(@account.id).reverse
+      @balance = Monzo::Balance.find(@account.id)
     end
   end
 

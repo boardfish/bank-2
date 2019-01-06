@@ -1,8 +1,20 @@
-<h1>Root#index</h1>
-<p>Find me in app/views/root/index.html.erb</p>
+<h1>Bank</h1>
+<p>Current balance: <%= @balance.inspect %></p>
 
 <% unless authenticated? %>
   <a href="<%= @monzo_login_url %>">Log in with Monzo</a>
 <% else%>
     <%# Do things when the user's logged in here! %%>
+    <h2>Pots</h2>
+    <ul>
+      <% @pots.each do |pot| %>
+        <li><%= pot.name %> | <%= pot.balance %> <%= pot.currency %></li>
+      <% end %>
+    </ul>
+    <h2>Transactions</h2>
+    <ul>
+      <% @transactions.each do |transaction| %>
+        <li><%= transaction.created %> | <%= transaction.description %> | <%= transaction.amount / 100.0 %> <%= transaction.currency %></li>
+      <% end %>
+    </ul>
 <% end %>
