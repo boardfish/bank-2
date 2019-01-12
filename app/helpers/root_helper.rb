@@ -17,4 +17,12 @@ module RootHelper
       Money.new(object, 'GBP').format
     end
   end
+
+  def link_to_previous_month
+    link_to "<", root_path(months_back: params[:months_back].to_i + 1)
+  end
+
+  def link_to_next_month
+    link_to ">", root_path(months_back: params[:months_back].to_i - 1)
+  end
 end

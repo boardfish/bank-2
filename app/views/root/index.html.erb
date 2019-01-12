@@ -1,4 +1,6 @@
 <h1>Bank</h1>
+<%= link_to_previous_month %>
+<%= link_to_next_month %>
 <p>Current balance: <%= to_currency(@balance) %></p>
 
 <% unless authenticated? %>
