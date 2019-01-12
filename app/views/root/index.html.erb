@@ -1,54 +1,76 @@
-<h1>Bank</h1>
-<%= link_to_previous_month %>
-<%= link_to_next_month %>
-<p>Current balance: <%= to_currency(@balance) %></p>
-
 <% unless authenticated? %>
   <a href="<%= @monzo_login_url %>">Log in with Monzo</a>
 <% else%>
-    <h2>Pots</h2>
-    <ul>
-      <% @pots.each do |pot| %>
-        <li><%= pot.name %> | <%= to_currency(pot) %></li>
-      <% end %>
-    </ul>
-    <h2>Transactions</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Months ago</th>
-          <% (0..11).to_a.reverse.each do |i|%>
-            <th><%= i %></th>
-          <% end %>
-        </tr>
-      </thead>
-      <tbody>
-        <% @categories.each do |category| %>
-          <tr>
-            <th><%= category.humanize %></th>
-            <% (0..11).to_a.each do |i|%>
-              <td><%= to_currency(@monthly_summary[i][category]) %></td>
+    <div class="row" style="max-height: 100vh;">
+      <div class="col-lg-6">
+        <h1>Bank</h1>
+        <%= link_to_previous_month %>
+        <%= link_to_next_month %>
+        <p>Current balance: <%= to_currency(@balance) %></p>
+        <h2>Transactions</h2>
+        <table class="table table-striped table-responsive">
+          <thead class="table-dark">
+            <tr class="text-center">
+              <th class="text-right">Months ago</th>
+              <% (0..11).to_a.reverse.each do |i|%>
+                <th><%= i %></th>
+              <% end %>
+            </tr>
+          </thead>
+          <tbody class="table-hover">
+            <% @categories.each do |category| %>
+              <tr class="text-right">
+                <th><%= category.humanize %></th>
+                <% (0..11).to_a.each do |i|%>
+                  <td><%= to_currency(@monthly_summary[i][category]) %></td>
+                <% end %>
+              </tr>
             <% end %>
-          </tr>
-        <% end %>
-        <tr>
-          <th>Balance</th>
-          <% (0..11).to_a.reverse.each do |i|%>
-            <th><%= to_currency(@monthly_balance[i]) %></th>
+            <tr class="text-right">
+              <th>Balance</th>
+              <% (0..11).to_a.reverse.each do |i|%>
+                <th><%= to_currency(@monthly_balance[i]) %></th>
+              <% end %>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-lg-6" style="max-height: 100%; overflow-y: auto;">
+        <h2>Pots</h2>
+        <ul>
+          <% @pots.each do |pot| %>
+            <li><%= pot.name %> | <%= to_currency(pot) %></li>
           <% end %>
-        </tr>
-      </tbody>
-    </table>
+        </ul>
+        <table class="table table-sm table-striped">
+          <thead class="table-dark">
+            <th>Date/Time</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Set Category</th>
+          </thead>
+          <tbody class="table-hover align-middle">
+            <% @transactions.each do |transaction| %>
+              <tr>
+                <td class="align-middle"><%= DateTime.parse(transaction.created).strftime("%y/%m/%d %H:%M") %></td> 
+                <td class="align-middle"><%= category(transaction) %></td> 
+                <td class="align-middle"><%= transaction.description %></td>
+                <td class="align-middle"><%= to_currency(transaction) %></td>
+                <td class="align-middle">
+                  <%= form_tag(set_category_path, method: 'get', class: 'input-group') do %>
+                    <%= hidden_field_tag(:transaction_id, transaction.id) %>
+                    <%= text_field_tag :category, nil, placeholder: category(transaction), class: 'form-control' %>
+                    <div class="input-group-append">
+                      <%= submit_tag("Set", class: 'btn btn-primary') %>
+                    </div>
+                  <% end %>
+                </td>
+              </li>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
     <br>
-    <ul>
-      <% @transactions.each do |transaction| %>
-        <li>
-          <%= DateTime.parse(transaction.created).strftime("%y/%m/%d %H:%M") %> 
-          | <%= category(transaction) %> 
-          | <%= transaction.description %> 
-          | <%= to_currency(transaction) %>
-          | <%= link_to 'Set category for some reason', set_category_path(transaction_id: transaction.id, category: 'Test Category!') %>
-        </li>
-      <% end %>
-    </ul>
 <% end %>
