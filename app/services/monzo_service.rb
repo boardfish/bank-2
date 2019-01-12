@@ -31,5 +31,9 @@ module MonzoService
     def default_account
       Monzo::Account.all.last
     end
+
+    def balance_on(date)
+      balance.balance - load_transactions(from: date).reduce(0) { |sum, transaction| sum + transaction.amount }
+    end
   end
 end

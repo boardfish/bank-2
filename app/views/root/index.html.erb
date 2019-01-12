@@ -29,6 +29,12 @@
             <% end %>
           </tr>
         <% end %>
+        <tr>
+          <th>Balance</th>
+          <% (0..11).to_a.reverse.each do |i|%>
+            <th><%= to_currency(@monthly_balance[i]) %></th>
+          <% end %>
+        </tr>
       </tbody>
     </table>
     <br>
