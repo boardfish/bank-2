@@ -1,7 +1,7 @@
 module BudgetsService
   class << self
     def for(monzo_account_id)
-      db_connection.hkeys(monzo_account_id).map { |category| [category, db_connection.hget(monzo_account_id, category)] }.to_h
+      db_connection.hkeys(monzo_account_id).map { |category| [category, db_connection.hget(monzo_account_id, category).to_i] }.to_h
     end
 
     def set(account_id:, category:, budget:)

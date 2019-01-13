@@ -28,7 +28,10 @@
           <tbody class="table-hover">
             <% @categories.each do |category| %>
               <tr class="text-right">
-                <th><%= category.humanize %></th>
+                <th>
+                  <%= category.humanize %>
+                  <span class="text-muted"><%= "(#{budget(category, @budgets) || 'not set'})" %></span>
+                </th>
                 <% (0..11).to_a.each do |i|%>
                   <td><%= to_currency(@monthly_summary[i][category]) %></td>
                 <% end %>

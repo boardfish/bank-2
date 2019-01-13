@@ -8,6 +8,10 @@ module RootHelper
     category.tr("-", " ").humanize
   end
 
+  def budget(category, budgets)
+    to_currency(budgets["budget_#{category}"])
+  end
+
   def to_currency(object)
     if object.is_a?(Monzo::Transaction)
       Money.new(object.amount, object.currency).format
