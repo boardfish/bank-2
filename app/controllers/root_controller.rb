@@ -15,6 +15,9 @@ class RootController < ApplicationController
       @monthly_summary = (0..11).to_a.reverse.map { |months_back| total_spend_by_category(MonzoService.transactions_by_month(months_back: months_back)) }
       @monthly_balance = (0..11).to_a.map { |months_back| MonzoService.balance_on(Date.today.at_beginning_of_month.days_ago(1).months_ago(months_back).to_time.to_datetime) }
       @categories = MonzoService.transactions.map { |transaction| transaction.metadata["#{@client_id}_category".to_sym] || transaction.category}.uniq
+      redis = Redis.new(:host => "db", :port => 6379, :db => 15)
+      redis.hset(@account.id, 'groceries', 80)
+      @budgets = redis.hgetall(@account.id)
     end
   end
 

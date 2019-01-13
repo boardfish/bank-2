@@ -4,6 +4,7 @@
     <div class="row" style="max-height: 100vh;">
       <div class="col-lg-6">
         <h1>Bank</h1>
+        <%= @budgets %>
         <%= link_to_previous_month %>
         <%= link_to_next_month %>
         <p>Current balance: <%= to_currency(@balance) %></p>
