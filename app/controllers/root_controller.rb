@@ -35,7 +35,7 @@ class RootController < ApplicationController
   def set_category
     Monzo::Transaction.create_annotation(
       params[:transaction_id], 
-      { "#{@client_id}_category" => params[:category].gsub(/[^0-9a-z_]/i, '').downcase }
+      { "#{@client_id}_category" => params[:category].parameterize.tr("-", "_") }
     )
     flash[:notice] = 'Transaction category set successfully.'
     redirect_to root_path

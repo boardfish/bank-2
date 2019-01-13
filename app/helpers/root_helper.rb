@@ -5,7 +5,7 @@ module RootHelper
 
   def category(transaction)
     category = transaction.metadata["#{@client_id}_category".to_sym] || transaction.category
-    category.humanize
+    category.tr("-", " ").humanize
   end
 
   def to_currency(object)
