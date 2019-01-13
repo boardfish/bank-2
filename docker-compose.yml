@@ -1,0 +1,12 @@
+version: '3'
+services:
+  web:
+    build: .
+    env_file: .env
+    command: bundle exec rails s -b '0.0.0.0'
+    volumes:
+      - .:/opt/bank
+    tmpfs: /opt/bank/tmp
+    ports:
+      - "3000:3000"
+    restart: always
