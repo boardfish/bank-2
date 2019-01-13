@@ -1,4 +1,7 @@
 class RootController < ApplicationController
+
+  @client_id = ENV.fetch('MONZO_CLIENT_ID')
+
   def index
     @monzo_login_url = monzo_login_url
     if session[:access_token]
@@ -11,7 +14,7 @@ class RootController < ApplicationController
       @grouped_transactions = total_spend_by_category(@transactions)
       @monthly_summary = (0..11).to_a.reverse.map { |months_back| total_spend_by_category(MonzoService.transactions_by_month(months_back: months_back)) }
       @monthly_balance = (0..11).to_a.map { |months_back| MonzoService.balance_on(Date.today.at_beginning_of_month.days_ago(1).months_ago(months_back).to_time.to_datetime) }
-      @categories = MonzoService.transactions.map { |transaction| transaction.metadata[:oauth2client_00009eUNchi7jOqB10g2yX_category] || transaction.category}.uniq
+      @categories = MonzoService.transactions.map { |transaction| transaction.metadata["#{@client_id}_category".to_sym] || transaction.category}.uniq
     end
   end
 
@@ -19,7 +22,7 @@ class RootController < ApplicationController
     @state = params[:state]
     @response = connection.post '/oauth2/token', URI.encode_www_form({
       grant_type: 'authorization_code',
-      client_id: 'oauth2client_00009eUNchi7jOqB10g2yX',
+      client_id: @client_id,
       client_secret: ENV.fetch('MONZO_CLIENT_SECRET'),
       redirect_uri: 'http://localhost:3000/callback',
       code: params[:code]
@@ -32,7 +35,7 @@ class RootController < ApplicationController
   def set_category
     Monzo::Transaction.create_annotation(
       params[:transaction_id], 
-      { oauth2client_00009eUNchi7jOqB10g2yX_category: params[:category].gsub(/[^0-9a-z_]/i, '').downcase }
+      { "#{@client_id}_category" => params[:category].gsub(/[^0-9a-z_]/i, '').downcase }
     )
     flash[:notice] = 'Transaction category set successfully.'
     redirect_to root_path
@@ -43,7 +46,7 @@ class RootController < ApplicationController
 
   def monzo_login_url
     'https://auth.monzo.com/' \
-    "?client_id=oauth2client_00009eUNchi7jOqB10g2yX" \
+    "?client_id=#{@client_id}" \
     "&redirect_uri=#{CGI.escape 'http://localhost:3000/callback'}" \
     '&response_type=code' \
     '&state=foobar'
@@ -51,7 +54,7 @@ class RootController < ApplicationController
 
   def total_spend_by_category(transactions)
     transactions
-      .group_by { |transaction| transaction.metadata[:oauth2client_00009eUNchi7jOqB10g2yX_category] || transaction.category }
+      .group_by { |transaction| transaction.metadata["#{@client_id}_category".to_sym] || transaction.category }
       .map { |category, transactions| [category, transactions.sum { |transaction| transaction.amount }]}.to_h
   end
 

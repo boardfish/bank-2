@@ -4,7 +4,7 @@ module RootHelper
   end
 
   def category(transaction)
-    category = transaction.metadata[:oauth2client_00009eUNchi7jOqB10g2yX_category] || transaction.category
+    category = transaction.metadata["#{@client_id}_category".to_sym] || transaction.category
     category.humanize
   end
 
