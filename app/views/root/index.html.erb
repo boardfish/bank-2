@@ -5,6 +5,13 @@
       <div class="col-lg-6">
         <h1>Bank</h1>
         <%= @budgets %>
+        <%= form_tag(set_budget_path, method: 'get', class: 'input-group') do %>
+          <%= text_field_tag :category, nil, placeholder: 'Enter a category name', class: 'form-control' %>
+          <%= text_field_tag :budget, nil, placeholder: 'Set a budget', class: 'form-control' %>
+          <div class="input-group-append">
+            <%= submit_tag("Set", class: 'btn btn-primary') %>
+          </div>
+        <% end %>
         <%= link_to_previous_month %>
         <%= link_to_next_month %>
         <p>Current balance: <%= to_currency(@balance) %></p>
