@@ -1,7 +1,5 @@
 class RootController < ApplicationController
 
-  @client_id = ENV.fetch('MONZO_CLIENT_ID')
-
   def index
     @monzo_login_url = monzo_login_url
     if session[:access_token]
@@ -23,7 +21,7 @@ class RootController < ApplicationController
     @state = params[:state]
     @response = connection.post '/oauth2/token', URI.encode_www_form({
       grant_type: 'authorization_code',
-      client_id: @client_id,
+      client_id: ENV.fetch('MONZO_CLIENT_ID'),
       client_secret: ENV.fetch('MONZO_CLIENT_SECRET'),
       redirect_uri: 'http://localhost:3000/callback',
       code: params[:code]
@@ -53,7 +51,7 @@ class RootController < ApplicationController
 
   def monzo_login_url
     'https://auth.monzo.com/' \
-    "?client_id=#{@client_id}" \
+    "?client_id=#{ENV.fetch('MONZO_CLIENT_ID')}" \
     "&redirect_uri=#{CGI.escape 'http://localhost:3000/callback'}" \
     '&response_type=code' \
     '&state=foobar'
