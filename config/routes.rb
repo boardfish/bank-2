@@ -4,5 +4,6 @@ Rails.application.routes.draw do
   get 'callback', to: 'root#callback'
   get 'logout', to: 'root#logout'
   get 'set_category', to: 'root#set_category'
+  get 'set_budget', to: 'root#set_budget'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

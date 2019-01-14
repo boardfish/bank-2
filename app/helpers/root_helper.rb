@@ -8,6 +8,10 @@ module RootHelper
     category.tr("-", " ").humanize
   end
 
+  def budget(category, budgets)
+    to_currency(budgets["budget_#{category}"])
+  end
+
   def to_currency(object)
     if object.is_a?(Monzo::Transaction)
       Money.new(object.amount, object.currency).format
@@ -24,5 +28,10 @@ module RootHelper
 
   def link_to_next_month
     link_to ">", root_path(months_back: params[:months_back].to_i - 1)
+  end
+
+  def is_over_budget?(amount: nil, budget: nil)
+    return false unless budget && amount
+    (amount*-1) > budget
   end
 end

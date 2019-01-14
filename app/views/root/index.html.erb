@@ -4,6 +4,13 @@
     <div class="row" style="max-height: 100vh;">
       <div class="col-lg-6">
         <h1>Bank</h1>
+        <%= form_tag(set_budget_path, method: 'get', class: 'input-group') do %>
+          <%= text_field_tag :category, nil, placeholder: 'Enter a category name', class: 'form-control' %>
+          <%= text_field_tag :budget, nil, placeholder: 'Set a budget', class: 'form-control' %>
+          <div class="input-group-append">
+            <%= submit_tag("Set", class: 'btn btn-primary') %>
+          </div>
+        <% end %>
         <%= link_to_previous_month %>
         <%= link_to_next_month %>
         <p>Current balance: <%= to_currency(@balance) %></p>
@@ -20,9 +27,12 @@
           <tbody class="table-hover">
             <% @categories.each do |category| %>
               <tr class="text-right">
-                <th><%= category.humanize %></th>
+                <th>
+                  <%= category.humanize %>
+                  <span class="text-muted"><%= "(#{budget(category, @budgets) || 'not set'})" %></span>
+                </th>
                 <% (0..11).to_a.each do |i|%>
-                  <td><%= to_currency(@monthly_summary[i][category]) %></td>
+                  <td class="<%= is_over_budget?(amount: @monthly_summary[i][category], budget: @budgets["budget_#{category}"]) ? 'text-danger' : '' %>"><%= to_currency(@monthly_summary[i][category]) %></td>
                 <% end %>
               </tr>
             <% end %>

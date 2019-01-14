@@ -15,6 +15,7 @@ class RootController < ApplicationController
       @monthly_summary = (0..11).to_a.reverse.map { |months_back| total_spend_by_category(MonzoService.transactions_by_month(months_back: months_back)) }
       @monthly_balance = (0..11).to_a.map { |months_back| MonzoService.balance_on(Date.today.at_beginning_of_month.days_ago(1).months_ago(months_back).to_time.to_datetime) }
       @categories = MonzoService.transactions.map { |transaction| transaction.metadata["#{@client_id}_category".to_sym] || transaction.category}.uniq
+      @budgets = BudgetsService.for(@account.id)
     end
   end
 
@@ -38,6 +39,12 @@ class RootController < ApplicationController
       { "#{@client_id}_category" => params[:category].parameterize.tr("-", "_") }
     )
     flash[:notice] = 'Transaction category set successfully.'
+    redirect_to root_path
+  end
+
+  def set_budget
+    BudgetsService.set(account_id: MonzoService.default_account.id, category: params[:category], budget: params[:budget].to_i)
+    flash[:notice] = 'Category budget set successfully.'
     redirect_to root_path
   end
 
