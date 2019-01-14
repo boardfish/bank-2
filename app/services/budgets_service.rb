@@ -1,3 +1,5 @@
+require 'redis'
+
 module BudgetsService
   class << self
     def for(monzo_account_id)
